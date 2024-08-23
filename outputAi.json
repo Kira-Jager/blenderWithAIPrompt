@@ -1,3 +1,6 @@
-import bpy
-
-bpy.ops.mesh.primitive_plane_add(size=50)
+[
+    {
+        "prompt": "add 4 cube ransom in 100 * 100 plane add animation to each others to jump on the plane",
+        "response": "import bpy\nimport random\n\nbpy.context.scene.frame_end = 100\nplane_size = 100\n\nbpy.ops.mesh.primitive_plane_add(size=plane_size, enter_editmode=False, location=(0, 0, 0))\nplane = bpy.context.active_object\n\nfor i in range(4):\n    bpy.ops.mesh.primitive_cube_add(size=2, location=(random.uniform(-plane_size/2, plane_size/2), random.uniform(-plane_size/2, plane_size/2), 2))\n    cube = bpy.context.active_object\n    cube.name = f\"Cube_{i+1}\"\n    cube.data.name = f\"Cube_{i+1}\"\n\n    cube.location[2] = 0\n    cube.keyframe_insert(data_path=\"location\", frame=0)\n    cube.location[2] = 4\n    cube.keyframe_insert(data_path=\"location\", frame=25)\n    cube.location[2] = 0\n    cube.keyframe_insert(data_path=\"location\", frame=50)\n    cube.location[2] = 4\n    cube.keyframe_insert(data_path=\"location\", frame=75)"
+    }
+]

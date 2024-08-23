@@ -18,6 +18,7 @@ def send_prompt_to_gemini(prompt):
         "For text objects, the script should use 'bpy.ops.object.text_add()' to add the text and directly modify the 'body' attribute of the created object. "
         "Ensure that the script is executable in Blender's scripting environment and contains only code with no comments or explanations. "
         "Avoid creating separate 'Text' data blocks unless explicitly required by the task."
+        "Rename eventually the name of created object inside the outliner and the mesh"
     )
     
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
@@ -94,19 +95,8 @@ class AI_OT_SubmitPrompt(bpy.types.Operator):
         response = send_prompt_to_gemini(prompt)
         print(response)
 
-        # Log the full response for debugging
-        # print("Full response:", response)
-        
-        try:
-            if isinstance(response, dict):
-                with open('outputAi.json', 'w') as file:
-                    json.dump(response, file, indent=4)
-            else:
-                with open('outputAi.json', 'w') as file:
-                    file.write(response)
-            self.report({'INFO'}, "Response written to outputAi.json")
-        except IOError as e:
-            self.report({'ERROR'}, f"IOError: {str(e)}")
+        append_to_json_file(prompt, response)
+        append_to_python_file(prompt, response)
 
 
         # Extract and execute the script if available
@@ -132,6 +122,46 @@ class AI_OT_SubmitPrompt(bpy.types.Operator):
 
         
         return {'FINISHED'}
+
+
+def append_to_json_file(prompt, response):
+    try:
+        entry = {"prompt": prompt, "response": response}
+        
+        # Open the file in read mode first to load existing data
+        try:
+            with open('outputAi.json', 'r') as file:
+                data = json.load(file)
+                if not isinstance(data, list):
+                    data = []
+        except (IOError, json.JSONDecodeError):  # Handle file not existing or empty/invalid JSON
+            data = []
+
+        # Append the new entry to the list
+        data.append(entry)
+        
+        # Write the updated list back to the file
+        with open('outputAi.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        
+        print("Response appended to outputAi.json")
+    except IOError as e:
+        print(f"IOError: {str(e)}")
+
+
+# Appending prompt and response to the Python file
+# Appending prompt and response to the Python file
+def append_to_python_file(prompt, response):
+    try:
+        with open('outputAi.py', 'a') as file:  # Open in append mode
+            file.write('''\n# Prompt:\n''')
+            file.write(f"'''{prompt}'''\n")
+            file.write("# Response:\n")
+            file.write(response)  # Directly write the script as Python code
+        print("Response appended to outputAi.py")
+    except IOError as e:
+        print(f"IOError: {str(e)}")
+
 
 # Register the operator in Blender
 def register():

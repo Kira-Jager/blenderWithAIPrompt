@@ -11,8 +11,9 @@ class AI_PT_Panel(bpy.types.Panel):
         layout = self.layout
         layout.label(text="Enter your prompt:")
         
+        
         # Text box for user input
-        layout.prop(context.scene, "ai_prompt", text="Prompt")
+        layout.prop(context.scene, "ai_prompt", text="Prompt", slider=True)
         
         # Button to submit the prompt
         layout.operator("ai.submit_prompt", text="Send")

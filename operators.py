@@ -10,20 +10,59 @@ import ast
 load_dotenv()
 GEMINI_API_KEY = os.getenv('GEMINI_TEXT_EMBEDDING_004_API_KEY')
 
-def send_prompt_to_gemini(prompt):
-    # Construct a more detailed prompt for generating Blender Python scripts
+def gather_scene_context():
+    # Gather information about the current scene
+    scene_context = {
+        "scene_name": bpy.context.scene.name,
+        "objects": []
+    }
+    
+    # Loop through all objects in the scene
+    for obj in bpy.context.scene.objects:
+        obj_info = {
+            "name": obj.name,
+            "type": obj.type,
+            "location": tuple(obj.location),
+            "rotation": tuple(obj.rotation_euler),
+            "scale": tuple(obj.scale)
+        }
+        scene_context["objects"].append(obj_info)
+    
+    return scene_context
+
+def load_previous_prompts_responses(json_file_path='outputAi.json', limit=5):
+    try:
+        with open(json_file_path, 'r') as file:
+            previous_data = json.load(file)
+            if isinstance(previous_data, list):
+                # Return the last 'limit' entries from the list
+                return previous_data[-limit:]
+            else:
+                return []
+    except (IOError, json.JSONDecodeError):
+        return []
+
+
+def prepare_gemini_prompt(prompt, scene_context, previous_prompts_responses):
+    # Construct the detailed prompt with scene context and previous prompts/responses
     context_prompt = (
-        "Generate a Blender Python script to achieve the following task: "
-        f"{prompt}. The script should create a 3D object in Blender and adapt the code according to the specific task described. "
+        f"Current scene context: {json.dumps(scene_context)}.\n\n"
+        f"Previous prompts and responses: {json.dumps(previous_prompts_responses)}.\n\n"
+        f"Now, generate a Blender Python script to achieve the following task: {prompt}. "
+        "The script should create a 3D object in Blender and adapt the code according to the specific task described. "
         "For text objects, the script should use 'bpy.ops.object.text_add()' to add the text and directly modify the 'body' attribute of the created object. "
         "Ensure that the script is executable in Blender's scripting environment and contains only code with no comments or explanations. "
         "Avoid creating separate 'Text' data blocks unless explicitly required by the task."
         "Rename eventually the name of created object inside the outliner and the mesh"
     )
     
+    return context_prompt
+
+def send_prompt_to_gemini(prompt):
+    # Construct a more detailed prompt for generating Blender Python scripts
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
     data = {
-        "contents": [{"parts": [{"text": context_prompt}]}]
+        "contents": [{"parts": [{"text": prompt}]}]
     }
     
     response = requests.post(url, json=data)
@@ -89,10 +128,19 @@ class AI_OT_SubmitPrompt(bpy.types.Operator):
 
     def execute(self, context):
         prompt = context.scene.ai_prompt
-        self.report({'INFO'}, f"Prompt submitted: {prompt}")
-
+        
+        # Gather scene context
+        scene_context = gather_scene_context()
+        
+        # Load previous prompts and responses
+        previous_prompts_responses = load_previous_prompts_responses()
+        
+        # Prepare the detailed prompt
+        detailed_prompt = prepare_gemini_prompt(prompt, scene_context, previous_prompts_responses)
+        
+        self.report({'INFO'}, f"Prompt submitted: {detailed_prompt}")
         # Send the prompt to the Gemini API
-        response = send_prompt_to_gemini(prompt)
+        response = send_prompt_to_gemini(detailed_prompt)
         print(response)
 
         append_to_json_file(prompt, response)

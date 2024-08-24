@@ -130,6 +130,7 @@ ENV/
 env.bak/
 venv.bak/
 *.blend
+materials/
 
 # Spyder project settings
 .spyderproject

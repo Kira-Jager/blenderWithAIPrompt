@@ -1,6 +1,66 @@
 [
     {
-        "prompt": "add 4 cube ransom in 100 * 100 plane add animation to each others to jump on the plane",
-        "response": "import bpy\nimport random\n\nbpy.context.scene.frame_end = 100\nplane_size = 100\n\nbpy.ops.mesh.primitive_plane_add(size=plane_size, enter_editmode=False, location=(0, 0, 0))\nplane = bpy.context.active_object\n\nfor i in range(4):\n    bpy.ops.mesh.primitive_cube_add(size=2, location=(random.uniform(-plane_size/2, plane_size/2), random.uniform(-plane_size/2, plane_size/2), 2))\n    cube = bpy.context.active_object\n    cube.name = f\"Cube_{i+1}\"\n    cube.data.name = f\"Cube_{i+1}\"\n\n    cube.location[2] = 0\n    cube.keyframe_insert(data_path=\"location\", frame=0)\n    cube.location[2] = 4\n    cube.keyframe_insert(data_path=\"location\", frame=25)\n    cube.location[2] = 0\n    cube.keyframe_insert(data_path=\"location\", frame=50)\n    cube.location[2] = 4\n    cube.keyframe_insert(data_path=\"location\", frame=75)"
+        "prompt": "add 4 cube ransom in 10 * 10 plane add animation to each others to jump on the plane",
+        "response": "import bpy\nimport random\n\nbpy.ops.mesh.primitive_plane_add(size=10, enter_editmode=False, align='WORLD', location=(0, 0, 0))\nplane = bpy.context.object\n\nfor i in range(4):\n    bpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD', location=(random.uniform(-4, 4), random.uniform(-4, 4), 0))\n    cube = bpy.context.object\n    cube.name = f\"Cube_{i + 1}\"\n    cube.data.name = f\"Cube_{i + 1}\"\n    \n    bpy.context.scene.frame_start = 1\n    bpy.context.scene.frame_end = 100\n    \n    cube.animation_data_create()\n    cube.animation_data.action = bpy.data.actions.new(name=\"Jump\")\n\n    fcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\n    fcurve.keyframe_points.add(2)\n    fcurve.keyframe_points[0].co = (1, 0)\n    fcurve.keyframe_points[1].co = (50, 2)\n    fcurve.keyframe_points[0].handle_left_type = 'FREE'\n    fcurve.keyframe_points[0].handle_right_type = 'FREE'\n    fcurve.keyframe_points[1].handle_left_type = 'FREE'\n    fcurve.keyframe_points[1].handle_right_type = 'FREE'\n\n    fcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\n    fcurve.keyframe_points.add(2)\n    fcurve.keyframe_points[0].co = (51, 2)\n    fcurve.keyframe_points[1].co = (100, 0)\n    fcurve.keyframe_points[0].handle_left_type = 'FREE'\n    fcurve.keyframe_points[0].handle_right_type = 'FREE'\n    fcurve.keyframe_points[1].handle_left_type = 'FREE'\n    fcurve.keyframe_points[1].handle_right_type = 'FREE'"
+    },
+    {
+        "prompt": "i got only 1 cube add  3 more with animation as the previous",
+        "response": "import bpy\nimport random\n\nbpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD', location=(random.uniform(-4, 4), random.uniform(-4, 4), 0))\ncube = bpy.context.object\ncube.name = \"Cube_2\"\ncube.data.name = \"Cube_2\"\n\nbpy.context.scene.frame_start = 1\nbpy.context.scene.frame_end = 100\n\ncube.animation_data_create()\ncube.animation_data.action = bpy.data.actions.new(name=\"Jump\")\n\nfcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\nfcurve.keyframe_points.add(2)\nfcurve.keyframe_points[0].co = (1, 0)\nfcurve.keyframe_points[1].co = (50, 2)\nfcurve.keyframe_points[0].handle_left_type = 'FREE'\nfcurve.keyframe_points[0].handle_right_type = 'FREE'\nfcurve.keyframe_points[1].handle_left_type = 'FREE'\nfcurve.keyframe_points[1].handle_right_type = 'FREE'\n\nfcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\nfcurve.keyframe_points.add(2)\nfcurve.keyframe_points[0].co = (51, 2)\nfcurve.keyframe_points[1].co = (100, 0)\nfcurve.keyframe_points[0].handle_left_type = 'FREE'\nfcurve.keyframe_points[0].handle_right_type = 'FREE'\nfcurve.keyframe_points[1].handle_left_type = 'FREE'\nfcurve.keyframe_points[1].handle_right_type = 'FREE'\n\nbpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD', location=(random.uniform(-4, 4), random.uniform(-4, 4), 0))\ncube = bpy.context.object\ncube.name = \"Cube_3\"\ncube.data.name = \"Cube_3\"\n\nbpy.context.scene.frame_start = 1\nbpy.context.scene.frame_end = 100\n\ncube.animation_data_create()\ncube.animation_data.action = bpy.data.actions.new(name=\"Jump\")\n\nfcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\nfcurve.keyframe_points.add(2)\nfcurve.keyframe_points[0].co = (1, 0)\nfcurve.keyframe_points[1].co = (50, 2)\nfcurve.keyframe_points[0].handle_left_type = 'FREE'\nfcurve.keyframe_points[0].handle_right_type = 'FREE'\nfcurve.keyframe_points[1].handle_left_type = 'FREE'\nfcurve.keyframe_points[1].handle_right_type = 'FREE'\n\nfcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\nfcurve.keyframe_points.add(2)\nfcurve.keyframe_points[0].co = (51, 2)\nfcurve.keyframe_points[1].co = (100, 0)\nfcurve.keyframe_points[0].handle_left_type = 'FREE'\nfcurve.keyframe_points[0].handle_right_type = 'FREE'\nfcurve.keyframe_points[1].handle_left_type = 'FREE'\nfcurve.keyframe_points[1].handle_right_type = 'FREE'\n\nbpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD', location=(random.uniform(-4, 4), random.uniform(-4, 4), 0))\ncube = bpy.context.object\ncube.name = \"Cube_4\"\ncube.data.name = \"Cube_4\"\n\nbpy.context.scene.frame_start = 1\nbpy.context.scene.frame_end = 100\n\ncube.animation_data_create()\ncube.animation_data.action = bpy.data.actions.new(name=\"Jump\")\n\nfcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\nfcurve.keyframe_points.add(2)\nfcurve.keyframe_points[0].co = (1, 0)\nfcurve.keyframe_points[1].co = (50, 2)\nfcurve.keyframe_points[0].handle_left_type = 'FREE'\nfcurve.keyframe_points[0].handle_right_type = 'FREE'\nfcurve.keyframe_points[1].handle_left_type = 'FREE'\nfcurve.keyframe_points[1].handle_right_type = 'FREE'\n\nfcurve = cube.animation_data.action.fcurves.new(data_path=\"location\", index=2)\nfcurve.keyframe_points.add(2)\nfcurve.keyframe_points[0].co = (51, 2)\nfcurve.keyframe_points[1].co = (100, 0)\nfcurve.keyframe_points[0].handle_left_type = 'FREE'\nfcurve.keyframe_points[0].handle_right_type = 'FREE'\nfcurve.keyframe_points[1].handle_left_type = 'FREE'\nfcurve.keyframe_points[1].handle_right_type = 'FREE'"
+    },
+    {
+        "prompt": "delete everything in the scene",
+        "response": "import bpy\n\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete()\n\nbpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(0, 0, 0))\ncube = bpy.context.object\ncube.name = \"MyCube\"\ncube.data.name = \"MyCube\""
+    },
+    {
+        "prompt": "can you do bird 3d model ?",
+        "response": ""
+    },
+    {
+        "prompt": "add me suzi on top of this cube",
+        "response": "import bpy\n\nbpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD', location=(0, 0, 1))\ncube = bpy.context.object\ncube.name = \"MyCube\"\ncube.data.name = \"MyCube\"\n\nbpy.ops.object.text_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 2))\ntext = bpy.context.object\ntext.name = \"me suzi\"\ntext.data.body = \"me suzi\""
+    },
+    {
+        "prompt": "I mean the monkey suzy from blender default object",
+        "response": "import bpy\n\nbpy.ops.mesh.primitive_monkey_add(enter_editmode=False, align='WORLD', location=(0, 0, 0))\nmonkey = bpy.context.object\nmonkey.name = \"Suzi\"\nmonkey.data.name = \"Suzi\""
+    },
+    {
+        "prompt": "can you  replace Suzi on top of all the object  ",
+        "response": "import bpy\n\nfor obj in bpy.context.scene.objects:\n    if obj.name != \"Suzi\":\n        bpy.ops.mesh.primitive_monkey_add(enter_editmode=False, align='WORLD', location=obj.location)\n        monkey = bpy.context.object\n        monkey.name = \"Suzi\"\n        monkey.data.name = \"Suzi\"\n        obj.select_set(True)\n        bpy.ops.object.delete()"
+    },
+    {
+        "prompt": "without deleting the cube",
+        "response": "import bpy\n\nbpy.ops.mesh.primitive_cube_add(enter_editmode=False, align='WORLD', location=(0, 0, 0))\ncube = bpy.context.object\ncube.name = \"MyCube\"\ncube.data.name = \"MyCube\"\n\nbpy.ops.mesh.primitive_monkey_add(enter_editmode=False, align='WORLD', location=(0, 0, 1))\nmonkey = bpy.context.object\nmonkey.name = \"Suzi\"\nmonkey.data.name = \"Suzi\""
+    },
+    {
+        "prompt": "delete all and write welcome Nicola",
+        "response": "import bpy\n\nbpy.ops.object.select_all(action='SELECT')\nbpy.ops.object.delete()\n\nbpy.ops.object.text_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0))\ntext = bpy.context.object\ntext.name = \"Welcome Nicola\"\ntext.data.body = \"Welcome Nicola\"\ntext.data.name = \"Welcome Nicola\""
+    },
+    {
+        "prompt": "add ten cube on the scene",
+        "response": "import bpy\nimport random\n\nfor i in range(10):\n    bpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD', location=(random.uniform(-4, 4), random.uniform(-4, 4), 0))\n    cube = bpy.context.object\n    cube.name = f\"Cube_{i + 1}\"\n    cube.data.name = f\"Cube_{i + 1}\""
+    },
+    {
+        "prompt": "rename all the cube object and their mesh to have only number like 1 ,2 to 10",
+        "response": "import bpy\n\nfor i, obj in enumerate(bpy.context.scene.objects):\n    if obj.type == 'MESH' and 'Cube' in obj.name:\n        obj.name = str(i + 1)\n        obj.data.name = str(i + 1)"
+    },
+    {
+        "prompt": "there is an error the first cube shopuld be 1 and the last 10",
+        "response": "import bpy\n\nfor i, obj in enumerate(bpy.context.scene.objects):\n    if obj.type == 'MESH' and 'Cube' in obj.name:\n        obj.name = str(i + 1)\n        obj.data.name = str(i + 1)"
+    },
+    {
+        "prompt": "make i - 1 for all cube",
+        "response": "import bpy\n\nfor i, obj in enumerate(bpy.context.scene.objects):\n    if obj.type == 'MESH' and 'Cube' in obj.name:\n        obj.name = str(i)\n        obj.data.name = str(i)"
+    },
+    {
+        "prompt": "it's not working the name of the element don't contains now cube but just the number associated to them",
+        "response": "import bpy\n\nfor i, obj in enumerate(bpy.context.scene.objects):\n    if obj.type == 'MESH':\n        obj.name = str(i + 1)\n        obj.data.name = str(i + 1)"
+    },
+    {
+        "prompt": "write sekou is here",
+        "response": "import bpy\n\nbpy.ops.object.text_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0))\ntext = bpy.context.object\ntext.name = \"sekou is here\"\ntext.data.body = \"sekou is here\"\ntext.data.name = \"sekou is here\""
+    },
+    {
+        "prompt": "write I'm sekou",
+        "response": "import bpy\n\nbpy.ops.object.text_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0))\ntext = bpy.context.object\ntext.name = \"I'm sekou\"\ntext.data.body = \"I'm sekou\"\ntext.data.name = \"I'm sekou\""
     }
 ]
